@@ -1,0 +1,25 @@
+# Environment variables (never commit real secrets)
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Flask / instance data (the SQLite database lives here)
+instance/
+*.sqlite
+*.sqlite3
+*.db
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
