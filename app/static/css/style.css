@@ -22,3 +22,96 @@ body {
     font-size: 2rem;
     margin-bottom: 12px;
 }
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.navbar .brand {
+    font-weight: 700;
+}
+
+.navbar nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.navbar a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.nav-username {
+    color: #4b5563;
+}
+
+.inline-form {
+    display: inline;
+}
+
+.link-button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #2563eb;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.flash {
+    max-width: 480px;
+    margin: 16px auto 0;
+    padding: 10px 14px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.flash-error {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.flash-success {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 320px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.auth-form label {
+    font-size: 0.9rem;
+    color: #4b5563;
+    margin-top: 8px;
+}
+
+.auth-form input {
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid #ccd2d9;
+    border-radius: 6px;
+}
+
+.auth-form button {
+    margin-top: 16px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #2563eb;
+    color: #fff;
+    cursor: pointer;
+}

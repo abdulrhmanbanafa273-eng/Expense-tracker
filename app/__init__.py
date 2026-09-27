@@ -1,8 +1,9 @@
 import os
 
-from flask import Flask
+from flask import Flask, g, session
 
 from app import db
+from app.models.user import get_user_by_id
 
 
 def create_app():
@@ -21,7 +22,17 @@ def create_app():
 
     db.init_app(app)
 
+    from app.services.csrf import generate_csrf_token
+    app.jinja_env.globals["csrf_token"] = generate_csrf_token
+
+    @app.before_request
+    def load_logged_in_user():
+        user_id = session.get("user_id")
+        g.user = get_user_by_id(user_id) if user_id is not None else None
+
+    from app.routes.auth import auth
     from app.routes.main import main
     app.register_blueprint(main)
+    app.register_blueprint(auth)
 
     return app
