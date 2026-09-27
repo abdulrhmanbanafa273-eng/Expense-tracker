@@ -7,6 +7,26 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    <header class="navbar">
+        <span class="brand">Expense Tracker</span>
+        <nav>
+            {% if g.user %}
+                <span class="nav-username">Hi, {{ g.user["username"] }}</span>
+                <form action="{{ url_for('auth.logout') }}" method="post" class="inline-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="link-button">Log out</button>
+                </form>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}">Log in</a>
+                <a href="{{ url_for('auth.register') }}">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+        <p class="flash flash-{{ category }}">{{ message }}</p>
+    {% endfor %}
+
     <main class="page">
         {% block content %}{% endblock %}
     </main>
