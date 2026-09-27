@@ -11,6 +11,7 @@
         <span class="brand">Expense Tracker</span>
         <nav>
             {% if g.user %}
+                <a href="{{ url_for('transactions.index') }}">Transactions</a>
                 <span class="nav-username">Hi, {{ g.user["username"] }}</span>
                 <form action="{{ url_for('auth.logout') }}" method="post" class="inline-form">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
@@ -30,5 +31,7 @@
     <main class="page">
         {% block content %}{% endblock %}
     </main>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
