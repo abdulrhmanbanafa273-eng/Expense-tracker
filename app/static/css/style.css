@@ -13,14 +13,14 @@ body {
 
 .page {
     max-width: 720px;
-    margin: 60px auto;
-    text-align: center;
+    margin: 40px auto;
     padding: 0 16px;
 }
 
 .page h1 {
     font-size: 2rem;
     margin-bottom: 12px;
+    text-align: center;
 }
 
 .navbar {
@@ -106,6 +106,114 @@ body {
 }
 
 .auth-form button {
+    margin-top: 16px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #2563eb;
+    color: #fff;
+    cursor: pointer;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.page-header h1 {
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #2563eb;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.empty-state {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 32px 20px;
+    text-align: center;
+    color: #6b7280;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.transaction-table th,
+.transaction-table td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid #eef0f2;
+}
+
+.transaction-table th {
+    background-color: #f4f6f8;
+    font-size: 0.85rem;
+    color: #4b5563;
+}
+
+.amount-income {
+    color: #15803d;
+    font-weight: 600;
+}
+
+.amount-expense {
+    color: #b91c1c;
+    font-weight: 600;
+}
+
+.row-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.row-actions a,
+.row-actions button {
+    font-size: 0.9rem;
+}
+
+.transaction-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.transaction-form label {
+    font-size: 0.9rem;
+    color: #4b5563;
+    margin-top: 8px;
+}
+
+.transaction-form input,
+.transaction-form select {
+    padding: 10px 12px;
+    font-size: 1rem;
+    border: 1px solid #ccd2d9;
+    border-radius: 6px;
+}
+
+.transaction-form button {
     margin-top: 16px;
     padding: 10px 20px;
     font-size: 1rem;
