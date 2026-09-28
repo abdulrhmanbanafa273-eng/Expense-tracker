@@ -31,9 +31,9 @@ def create_app():
         g.user = get_user_by_id(user_id) if user_id is not None else None
 
     from app.routes.auth import auth
-    from app.routes.main import main
+    from app.routes.dashboard import dashboard
     from app.routes.transactions import transactions
-    app.register_blueprint(main)
+    app.register_blueprint(dashboard)
     app.register_blueprint(auth)
     app.register_blueprint(transactions)
 
