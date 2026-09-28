@@ -1,7 +1,11 @@
 from calendar import month_name
 from datetime import date
 
-from app.models.transaction import get_totals_by_type_for_user, get_transactions_for_user
+from app.models.transaction import (
+    get_category_breakdown_for_user,
+    get_totals_by_type_for_user,
+    get_transactions_for_user,
+)
 
 RECENT_TRANSACTIONS_LIMIT = 10
 
@@ -30,6 +34,12 @@ def get_dashboard_summary(user_id, year, month):
     recent_transactions = get_transactions_for_user(user_id, year, month, limit=RECENT_TRANSACTIONS_LIMIT)
 
     return summary, recent_transactions
+
+
+def get_category_breakdown(user_id, year, month):
+    """Category totals for one month, as plain dicts (chart-ready, JSON-serializable)."""
+    rows = get_category_breakdown_for_user(user_id, year, month)
+    return [{"category": row["category"], "total": row["total"]} for row in rows]
 
 
 def get_month_context(year, month):

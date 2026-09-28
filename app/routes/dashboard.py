@@ -3,7 +3,7 @@ from datetime import date
 from flask import Blueprint, g, redirect, render_template, request, url_for
 
 from app.auth import login_required
-from app.services.dashboard_service import get_dashboard_summary, get_month_context
+from app.services.dashboard_service import get_category_breakdown, get_dashboard_summary, get_month_context
 
 dashboard = Blueprint("dashboard", __name__)
 
@@ -19,11 +19,13 @@ def index():
         return redirect(url_for("dashboard.index"))
 
     summary, recent_transactions = get_dashboard_summary(g.user["id"], year, month)
+    category_breakdown = get_category_breakdown(g.user["id"], year, month)
     month_context = get_month_context(year, month)
 
     return render_template(
         "dashboard/index.html",
         summary=summary,
         recent_transactions=recent_transactions,
+        category_breakdown=category_breakdown,
         month=month_context,
     )

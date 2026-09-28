@@ -59,6 +59,64 @@ def get_totals_by_type_for_user(user_id, year=None, month=None):
     return db.execute(query, params).fetchall()
 
 
+def get_category_breakdown_for_user(user_id, year=None, month=None):
+    """Total spending (expenses only) per category, optionally scoped to one month."""
+    db = get_db()
+    query = """
+        SELECT category, SUM(amount) AS total
+        FROM transactions
+        WHERE user_id = ? AND type = 'expense'
+    """
+    params = [user_id]
+
+    if year is not None and month is not None:
+        query += " AND strftime('%Y', date) = ? AND strftime('%m', date) = ?"
+        params += [f"{year:04d}", f"{month:02d}"]
+
+    query += " GROUP BY category ORDER BY total DESC"
+    return db.execute(query, params).fetchall()
+
+
+SORTABLE_COLUMNS = {"date": "date", "amount": "amount", "category": "category"}
+
+
+def search_transactions_for_user(
+    user_id, category=None, type_=None, date_from=None, date_to=None, search=None, sort="date", order="desc"
+):
+    """Filter/search/sort a user's transactions. sort/order are constrained to a fixed
+    whitelist below, since SQL placeholders can't parameterize column names or ORDER BY
+    direction - only values from SORTABLE_COLUMNS and {"asc", "desc"} ever reach the query."""
+    db = get_db()
+    query = "SELECT * FROM transactions WHERE user_id = ?"
+    params = [user_id]
+
+    if category:
+        query += " AND category = ?"
+        params.append(category)
+
+    if type_:
+        query += " AND type = ?"
+        params.append(type_)
+
+    if date_from:
+        query += " AND date >= ?"
+        params.append(date_from)
+
+    if date_to:
+        query += " AND date <= ?"
+        params.append(date_to)
+
+    if search:
+        query += " AND description LIKE ?"
+        params.append(f"%{search}%")
+
+    sort_column = SORTABLE_COLUMNS.get(sort, "date")
+    sort_direction = "ASC" if order == "asc" else "DESC"
+    query += f" ORDER BY {sort_column} {sort_direction}, id DESC"
+
+    return db.execute(query, params).fetchall()
+
+
 def get_transaction_for_user(transaction_id, user_id):
     """Look up a transaction, scoped to this user. Returns None if it's missing or not theirs."""
     db = get_db()
