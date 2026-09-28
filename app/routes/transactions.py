@@ -8,7 +8,7 @@ from app.models.transaction import (
     create_transaction,
     delete_transaction,
     get_transaction_for_user,
-    get_transactions_for_user,
+    search_transactions_for_user,
     update_transaction,
 )
 from app.services.csrf import validate_csrf_token
@@ -20,8 +20,29 @@ transactions = Blueprint("transactions", __name__, url_prefix="/transactions")
 @transactions.route("/")
 @login_required
 def index():
-    all_transactions = get_transactions_for_user(g.user["id"])
-    return render_template("transactions/list.html", transactions=all_transactions)
+    filters = {
+        "type": request.args.get("type", ""),
+        "category": request.args.get("category", ""),
+        "date_from": request.args.get("date_from", ""),
+        "date_to": request.args.get("date_to", ""),
+        "q": request.args.get("q", "").strip(),
+        "sort": request.args.get("sort", "date"),
+        "order": request.args.get("order", "desc"),
+    }
+
+    all_transactions = search_transactions_for_user(
+        g.user["id"],
+        category=filters["category"] or None,
+        type_=filters["type"] or None,
+        date_from=filters["date_from"] or None,
+        date_to=filters["date_to"] or None,
+        search=filters["q"] or None,
+        sort=filters["sort"],
+        order=filters["order"],
+    )
+    return render_template(
+        "transactions/list.html", transactions=all_transactions, categories=CATEGORIES, filters=filters
+    )
 
 
 @transactions.route("/add", methods=("GET", "POST"))
