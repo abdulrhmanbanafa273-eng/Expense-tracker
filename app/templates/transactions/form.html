@@ -38,6 +38,6 @@
         value="{{ transaction['date'] if transaction else today }}" required
     >
 
-    <button type="submit">{{ "Save Changes" if transaction else "Add Transaction" }}</button>
+    <button type="submit" data-loading-text="Saving...">{{ "Save Changes" if transaction else "Add Transaction" }}</button>
 </form>
 {% endblock %}
