@@ -12,10 +12,21 @@ def create_app():
 
     project_root = os.path.dirname(app.root_path)
 
+    secret_key = os.environ.get("SECRET_KEY")
+    if not secret_key:
+        raise RuntimeError(
+            "SECRET_KEY is not set. Copy .env.example to .env and set a real value - "
+            "session cookies can't be signed securely without one."
+        )
+
     app.config.from_mapping(
-        SECRET_KEY=os.environ.get("SECRET_KEY", "dev"),
+        SECRET_KEY=secret_key,
         DATABASE=os.path.join(app.instance_path, "expense_tracker.sqlite"),
         SCHEMA_PATH=os.path.join(project_root, "schema.sql"),
+        # Belt-and-braces alongside the CSRF token: browsers won't attach a
+        # "Lax" cookie to a cross-site POST in the first place.
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SAMESITE="Lax",
     )
 
     os.makedirs(app.instance_path, exist_ok=True)
