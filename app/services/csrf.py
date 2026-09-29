@@ -1,3 +1,4 @@
+import hmac
 import secrets
 
 from flask import abort, session
@@ -13,5 +14,7 @@ def generate_csrf_token():
 def validate_csrf_token(submitted_token):
     """Abort the request with 400 if the submitted token doesn't match the session's."""
     expected_token = session.get("csrf_token")
-    if not expected_token or submitted_token != expected_token:
+    # hmac.compare_digest avoids leaking timing information about how much of the
+    # token matched, which a plain != comparison would not.
+    if not expected_token or not submitted_token or not hmac.compare_digest(submitted_token, expected_token):
         abort(400, description="Invalid or missing CSRF token.")
