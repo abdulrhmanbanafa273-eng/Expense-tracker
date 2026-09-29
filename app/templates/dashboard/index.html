@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Dashboard</h1>
+    <a href="{{ url_for('transactions.add') }}" class="button">Add Transaction</a>
+</div>
+
+<div class="month-nav">
+    <a href="{{ url_for('dashboard.index', year=month['previous'][0], month=month['previous'][1]) }}">&larr; Previous</a>
+    <span class="month-label">{{ month["label"] }}</span>
+    {% if not month["is_current"] %}
+        <a href="{{ url_for('dashboard.index', year=month['next'][0], month=month['next'][1]) }}">Next &rarr;</a>
+    {% else %}
+        <span class="month-nav-disabled">Next &rarr;</span>
+    {% endif %}
+</div>
+
+<div class="summary-cards">
+    <div class="summary-card">
+        <p class="summary-label">Balance</p>
+        <p class="summary-value">{{ "-" if summary["balance"] < 0 }}${{ "%.2f"|format(summary["balance"]|abs) }}</p>
+    </div>
+    <div class="summary-card">
+        <p class="summary-label">Income</p>
+        <p class="summary-value amount-income">${{ "%.2f"|format(summary["income"]) }}</p>
+    </div>
+    <div class="summary-card">
+        <p class="summary-label">Expenses</p>
+        <p class="summary-value amount-expense">${{ "%.2f"|format(summary["expenses"]) }}</p>
+    </div>
+    <div class="summary-card">
+        <p class="summary-label">Transactions</p>
+        <p class="summary-value">{{ summary["count"] }}</p>
+    </div>
+</div>
+
+{% if category_breakdown %}
+<h2>Spending by Category</h2>
+<div class="chart-card">
+    <canvas id="category-chart"></canvas>
+</div>
+{% endif %}
+
+<h2>Recent Transactions</h2>
+{% if recent_transactions %}
+<div class="table-responsive">
+<table class="transaction-table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for transaction in recent_transactions %}
+        <tr>
+            <td>{{ transaction["date"] }}</td>
+            <td>{{ transaction["category"] }}</td>
+            <td>{{ transaction["description"] or "" }}</td>
+            <td class="amount-{{ transaction['type'] }}">
+                {{ "+" if transaction["type"] == "income" else "-" }}${{ "%.2f"|format(transaction["amount"]) }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+<p><a href="{{ url_for('transactions.index') }}">View all transactions</a></p>
+{% else %}
+<p class="empty-state">No transactions this month. <a href="{{ url_for('transactions.add') }}">Add one</a>.</p>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if category_breakdown %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+    const categoryData = {{ category_breakdown | tojson }};
+
+    new Chart(document.getElementById("category-chart"), {
+        type: "doughnut",
+        data: {
+            labels: categoryData.map((row) => row.category),
+            datasets: [{
+                data: categoryData.map((row) => row.total),
+            }],
+        },
+        options: {
+            plugins: {
+                legend: { position: "right" },
+            },
+        },
+    });
+</script>
+{% endif %}
+{% endblock %}

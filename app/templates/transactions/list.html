@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Transactions - Expense Tracker{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Transactions</h1>
+    <a href="{{ url_for('transactions.add') }}" class="button">Add Transaction</a>
+</div>
+
+{% set has_active_filters = filters["type"] or filters["category"] or filters["date_from"] or filters["date_to"] or filters["q"] %}
+
+<form method="get" class="filter-form">
+    <select name="type">
+        <option value="">All Types</option>
+        <option value="income" {{ "selected" if filters["type"] == "income" }}>Income</option>
+        <option value="expense" {{ "selected" if filters["type"] == "expense" }}>Expense</option>
+    </select>
+
+    <select name="category">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+        <option value="{{ cat }}" {{ "selected" if filters["category"] == cat }}>{{ cat }}</option>
+        {% endfor %}
+    </select>
+
+    <input type="date" name="date_from" value="{{ filters['date_from'] }}" title="From date">
+    <input type="date" name="date_to" value="{{ filters['date_to'] }}" title="To date">
+
+    <input type="text" name="q" placeholder="Search description..." value="{{ filters['q'] }}">
+
+    <select name="sort">
+        <option value="date" {{ "selected" if filters["sort"] == "date" }}>Sort: Date</option>
+        <option value="amount" {{ "selected" if filters["sort"] == "amount" }}>Sort: Amount</option>
+        <option value="category" {{ "selected" if filters["sort"] == "category" }}>Sort: Category</option>
+    </select>
+
+    <select name="order">
+        <option value="desc" {{ "selected" if filters["order"] == "desc" }}>Descending</option>
+        <option value="asc" {{ "selected" if filters["order"] == "asc" }}>Ascending</option>
+    </select>
+
+    <button type="submit" class="button">Apply</button>
+    {% if has_active_filters or filters["sort"] != "date" or filters["order"] != "desc" %}
+        <a href="{{ url_for('transactions.index') }}">Clear</a>
+    {% endif %}
+</form>
+
+{% if transactions %}
+<div class="table-responsive">
+<table class="transaction-table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for transaction in transactions %}
+        <tr>
+            <td>{{ transaction["date"] }}</td>
+            <td>{{ transaction["category"] }}</td>
+            <td>{{ transaction["description"] or "" }}</td>
+            <td class="amount-{{ transaction['type'] }}">
+                {{ "+" if transaction["type"] == "income" else "-" }}${{ "%.2f"|format(transaction["amount"]) }}
+            </td>
+            <td class="row-actions">
+                <a href="{{ url_for('transactions.edit', transaction_id=transaction['id']) }}">Edit</a>
+                <form
+                    method="post"
+                    action="{{ url_for('transactions.delete', transaction_id=transaction['id']) }}"
+                    class="inline-form"
+                    data-confirm="Delete this transaction? This can't be undone."
+                >
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="link-button" data-loading-text="Deleting...">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% else %}
+    {% if has_active_filters %}
+    <p class="empty-state">No transactions match your filters. <a href="{{ url_for('transactions.index') }}">Clear filters</a>.</p>
+    {% else %}
+    <p class="empty-state">No transactions yet. <a href="{{ url_for('transactions.add') }}">Add your first one</a>.</p>
+    {% endif %}
+{% endif %}
+{% endblock %}
